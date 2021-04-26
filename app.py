@@ -20,6 +20,14 @@ class menu(db.Model):
 def homepage():
   return render_template('homepage.html')
 
+@app.route('/work-menu')
+def workMenu():
+  return render_template('work-menu.html')
+
+@app.route('/work-orders')
+def workOrder():
+  return render_template('work-orders.html')
+
 @app.route('/register-login')
 def registerLogin():
       return render_template("register-login.html")
@@ -27,7 +35,6 @@ def registerLogin():
 @app.route('/menu', methods=['POST', 'GET'])
 def menu():
   return render_template('cmenu.html')
-
 
 
 if __name__ == '__main__':
