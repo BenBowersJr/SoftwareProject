@@ -1,1 +1,63 @@
-{% extends 'base.html'%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-content: space-between;
+    }
+    img {
+        width: 470px;
+    }
+    section {
+        text-align: center;
+        font-size: 16pt;
+    }
+    article {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 5px;
+    }
+    footer {
+        text-align: center;
+    }
+  </style>
+</head>
+<body id="home">
+
+  <header>
+    <h1>Bulldog Pizza</h1>
+  
+    <nav>
+      <ul>
+        <li><a href="">Homepage</a></li>
+        <li> <a href="">Menu</a></li>
+        <li> <a href="">Cart</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+<h2>Welcome to the Bulldog Pizza Shop!</h2>
+
+<section>
+    <p>Here at the Bulldog Pizza Shop, you can order take out or delivery online.
+  Don't forget to register or login.</p>
+  <a href="http://localhost:5000/register-login">Register/Login</a>
+</section>
+
+<article>
+  <img src="{{url_for('static', filename='pizzaImage.jpg')}}"/>
+  <img src="{{url_for('static', filename='pizzaImage2.jpg')}}"/>
+  <img src="{{url_for('static', filename='pizzaImage3.jpg')}}"/>
+</article>
+
+<footer>
+  <h3>Contact Us</h3>
+  <p>000-000-0000</p>
+</footer>
+
+</body>
+</html>
