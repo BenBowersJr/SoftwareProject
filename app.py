@@ -5,37 +5,11 @@ from psycopg2 import Error
 
 app = Flask(__name__)
 
-SQLALCHEMY_TRACK_MODIFICATIONS = False
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 ## Im still figuring this out.. dont trust the below line
 #app.config['DATABASE_URL'] = 'postgres://hqlekupiwiodgw:e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c@ec2-3-217-219-146.compute-1.amazonaws.com:5432/d3duhguvo7sdom'
 
-
-try:
-    # Connect to an existing database
-    connection = psycopg2.connect(user="jodywinters",
-                                  password="NonaGrey11",
-                                  host="localhost",
-                                  port="5432",
-                                  database="postgres")
-
-    # Create a cursor to perform database operations
-    cursor = connection.cursor()
-    insert_query ="""INSERT INTO orders(customer_username, pizza_crust, pizza_topping1, pizza_topping2) VALUES('jody12', 'thin crust', 'pepperoni', 'cheese');"""
-    cursor.execute(insert_query)
-    connection.commit()
-    print("1 record inserted successfully")
-    cursor.execute("SELECT * FROM orders")
-    records = cursor.fetchall()
-    print("Results ", records)
-
-except (Exception, Error) as error:
-    print("Error while connecting to PostgreSQL", error)
-finally:
-    if (connection):
-        cursor.close()
-        connection.close()
-        print("PostgreSQL connection is closed")
 
 db = SQLAlchemy(app)
 
@@ -55,9 +29,54 @@ def homepage():
 def workMenu():
   return render_template('work-menu.html')
 
-@app.route('/work-orders')
+@app.route('/work-orders', methods=['POST', 'GET'])
 def workOrder():
-  return render_template('work-orders.html')
+  try:
+    # Connect to an existing database
+    connection = psycopg2.connect(user="jodywinters",
+                                  password="NonaGrey11",
+                                  host="localhost",
+                                  port="5432",
+                                  database="postgres")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM orders order by customer_username asc")
+    records = cursor.fetchall()
+
+  except (Exception, Error) as error:
+      print("Error while connecting to PostgreSQL", error)
+  finally:
+    if (connection):
+        cursor.close()
+        connection.close()
+        print("PostgreSQL connection is closed")
+  return render_template('work-orders.html', records = records)
+
+@app.route('/submit', methods=['POST', 'GET'])
+def deletingOrder():
+  if request.method == 'POST':
+    username = request.form['username']
+    try:
+      # Connect to an existing database
+      connection = psycopg2.connect(user="jodywinters",
+                                    password="NonaGrey11",
+                                    host="localhost",
+                                    port="5432",
+                                    database="postgres")
+      cursor = connection.cursor()
+      deletequery = ("""delete from orders where customer_username = '{}'""".format(username))
+      cursor.execute(deletequery)
+      connection.commit()
+      cursor.execute("SELECT * FROM orders")
+      records = cursor.fetchall()
+
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+      if (connection):
+          cursor.close()
+          connection.close()
+          print("PostgreSQL connection is closed")
+    return render_template("work-orders.html", records = records)
 
 @app.route('/register-login')
 def registerLogin():
