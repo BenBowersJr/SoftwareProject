@@ -66,7 +66,7 @@ def deletingOrder():
       deletequery = ("""delete from orders where customer_username = '{}'""".format(username))
       cursor.execute(deletequery)
       connection.commit()
-      cursor.execute("SELECT * FROM orders")
+      cursor.execute("SELECT * FROM orders order by customer_username asc")
       records = cursor.fetchall()
 
     except (Exception, Error) as error:

@@ -25,8 +25,8 @@
         <tr>
            <th>Username</th>
            <th>Crust</th>
-           <th>Topping1</th>
-           <th>Topping2</th>
+           <th>Topping 1</th>
+           <th>Topping 2</th>
            <th>Order Complete</th>
         </tr>
         {% for item in records %}
@@ -35,7 +35,7 @@
               <td> {{ item[2] }} </td>
               <td> {{ item[3] }} </td>
               <td> {{ item[4] }} </td>
-              <td><label for="complete">Completed</label><input type="checkbox" id="complete" name="finish"/></td>
+              <td><label for="complete">Complete</label><input type="checkbox" id="complete" name="finish"/></td>
            </tr>
         {% endfor %}
      </table>
@@ -44,6 +44,9 @@
          <P>PRESS DELETE TO REMOVE ORDER</P>
          <input class="textbox" type="text" size="40px" name="username" placeholder="CUSTOMER USERNAME"/>
          <input type="submit" value="DELETE ORDER"/>
+         {% if message %}
+         <p>{{ message }}</p>
+         {% endif %}
       </form>
   </body>
   </body>
