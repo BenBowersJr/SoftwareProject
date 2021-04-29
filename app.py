@@ -28,9 +28,54 @@ def homepage():
 def workMenu():
   return render_template('work-menu.html')
 
-@app.route('/work-orders')
+@app.route('/work-orders', methods=['POST', 'GET'])
 def workOrder():
-  return render_template('work-orders.html')
+  try:
+    # Connect to an existing database
+    connection = psycopg2.connect(user="jodywinters",
+                                  password="NonaGrey11",
+                                  host="localhost",
+                                  port="5432",
+                                  database="postgres")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM orders order by customer_username asc")
+    records = cursor.fetchall()
+
+  except (Exception, Error) as error:
+      print("Error while connecting to PostgreSQL", error)
+  finally:
+    if (connection):
+        cursor.close()
+        connection.close()
+        print("PostgreSQL connection is closed")
+  return render_template('work-orders.html', records = records)
+
+@app.route('/submit', methods=['POST', 'GET'])
+def deletingOrder():
+  if request.method == 'POST':
+    username = request.form['username']
+    try:
+      # Connect to an existing database
+      connection = psycopg2.connect(user="jodywinters",
+                                    password="NonaGrey11",
+                                    host="localhost",
+                                    port="5432",
+                                    database="postgres")
+      cursor = connection.cursor()
+      deletequery = ("""delete from orders where customer_username = '{}'""".format(username))
+      cursor.execute(deletequery)
+      connection.commit()
+      cursor.execute("SELECT * FROM orders")
+      records = cursor.fetchall()
+
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+      if (connection):
+          cursor.close()
+          connection.close()
+          print("PostgreSQL connection is closed")
+    return render_template("work-orders.html", records = records)
 
 @app.route('/register-login')
 def registerLogin():
