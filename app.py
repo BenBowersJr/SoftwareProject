@@ -10,6 +10,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 ## Im still figuring this out.. dont trust the below line
 #app.config['DATABASE_URL'] = 'postgres://hqlekupiwiodgw:e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c@ec2-3-217-219-146.compute-1.amazonaws.com:5432/d3duhguvo7sdom'
 
+mode = 'dev'
 
 db = SQLAlchemy(app)
 
@@ -33,11 +34,19 @@ def workMenu():
 def workOrder():
   try:
     # Connect to an existing database
-    connection = psycopg2.connect(user="jodywinters",
-                                  password="NonaGrey11",
-                                  host="localhost",
-                                  port="5432",
-                                  database="postgres")
+    if mode == 'dev':
+      connection = psycopg2.connect(user="jodywinters",
+                                    password="NonaGrey11",
+                                    host="localhost",
+                                    port="5432",
+                                    database="postgres")
+    else:
+      connection = psycopg2.connect(
+        host = "ec2-3-217-219-146.compute-1.amazonaws.com",
+        database= "d3duhguvo7sdom",
+        user="hqlekupiwiodgw",
+        password="e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c"
+      )
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM orders order by customer_username asc")
     records = cursor.fetchall()
@@ -57,11 +66,19 @@ def deletingOrder():
     username = request.form['username']
     try:
       # Connect to an existing database
-      connection = psycopg2.connect(user="jodywinters",
+      if mode == 'dev':
+        connection = psycopg2.connect(user="jodywinters",
                                     password="NonaGrey11",
                                     host="localhost",
                                     port="5432",
                                     database="postgres")
+      else:
+        connection = psycopg2.connect(
+          host = "ec2-3-217-219-146.compute-1.amazonaws.com",
+          database= "d3duhguvo7sdom",
+          user="hqlekupiwiodgw",
+          password="e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c"
+        )
       cursor = connection.cursor()
       deletequery = ("""delete from orders where customer_username = '{}'""".format(username))
       cursor.execute(deletequery)
