@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <style>
+      .container {
+          display: flex;
+          justify-content: space-around;
+          justify-items: center;
+      }
+      footer { 
+          text-align: center;
+      }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Bulldog Pizza</h1>
+  
+    <nav>
+      <ul>
+        <li><a href="http://localhost:5000/">Homepage</a></li>
+        <li> <a href="">Menu</a></li>
+        <li> <a href="">Cart</a></li>
+      </ul>
+    </nav>
+  </header>
+<div class="container">
+  <div>
+    <h1>Register</h1>
+    <h2>
+        <form action="{{ url_for('register') }}" method="post">
+          <div class="msg">{{ msg }}</div>
+            <input id="username" name="username" type="text" placeholder="Enter Your Username" class="textbox"/></br></br>
+            <input id="employeeID" name="employeeID" type="text" placeholder="Enter Your EmployeeID" class="textbox"/></br></br>
+            <input id="password" name="password" type="password" placeholder="Enter Your Password" class="textbox"/></br></br>
+            <input type="submit" class="btn" value="Sign Up"></br>
+        </form>
+        {% if message %}
+        <p>{{ message }}</p>
+        {% endif %}
+    </h2>
+    </div>
+</div>
+<footer>
+    <h3>Contact Us</h3>
+    <p>000-000-0000</p>
+</footer>
+</body>
+</html>
