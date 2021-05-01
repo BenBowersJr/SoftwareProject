@@ -11,7 +11,7 @@ con = psycopg2.connect(
 )
 cur = con.cursor()
 
-secret_key="secret"
+app.secret_key = "the greatest key"
 
 
 
@@ -182,5 +182,5 @@ cur.close()
 con.close()
 
 if __name__ == '__main__':
-  app.secret_key = "the greatest key"
+  
   app.run(debug=True)
