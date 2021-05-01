@@ -24,7 +24,7 @@ class menu(db.Model):
 @app.route('/')
 def homepage():
   if not session.get('logged_in'):
-  return render_template('homepage.html')
+    return render_template('homepage.html')
 
 @app.route('/work-menu')
 def workMenu():
@@ -72,7 +72,7 @@ def login():
 @app.route('/logout')
 def logout():
   session['logged_in'] = False
-    return redirect(url_for('login', message='Logged out successful!'))
+  return redirect(url_for('login', message='Logged out successful!'))
 
 @app.route('/register', methods =['GET', 'POST'])
 def register():
