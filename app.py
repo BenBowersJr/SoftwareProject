@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request, session, flash
 import psycopg2, time
-
+from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 #connecting to heroku database 
 con = psycopg2.connect(
