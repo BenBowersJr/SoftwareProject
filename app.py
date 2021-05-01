@@ -1,4 +1,5 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, session
+import os
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 import psycopg2
@@ -7,14 +8,10 @@ from sqlalchemy import *
 # Initialization
 
 app = Flask(__name__)
-#app.config.from_object(Config)
-#DB_URI = app.config['SQLALCHEMY_DATABASE_URI']
 ## Im still figuring this out.. dont trust the below line
 db = app.config['DATABASE_URL'] = 'postgres://hqlekupiwiodgw:e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c@ec2-3-217-219-146.compute-1.amazonaws.com:5432/d3duhguvo7sdom'
 
 db = SQLAlchemy(app)
-#engine = create_engine(db)
-#metadata = MetaData(engine)
 
 class menu(db.Model):
   __tablename__ = 'menu'
@@ -26,6 +23,7 @@ class menu(db.Model):
 
 @app.route('/')
 def homepage():
+  if not session.get('logged_in'):
   return render_template('homepage.html')
 
 @app.route('/work-menu')
@@ -38,23 +36,43 @@ def workOrder():
 
 @app.route('/login', methods =['GET', 'POST'])
 def login():
-  msg = ''
   if request.method == 'POST':
     username = request.form['username']
     password = request.form['password']
-    result = engine.execute("""SELECT * FROM customerlogin WHERE Customer_username = %s AND Customer_password = %s""", (username, password, ))
-    account = result.fetchone()
-    if account:
-      msg = 'Logged in successfully !'
-      return render_template('cmenu.html', msg = msg)
+    employeeID = request.form['employeeID']
+    con = psycopg2.connect(
+    host = "ec2-3-217-219-146.compute-1.amazonaws.com",
+    database= "d3duhguvo7sdom",
+    user="hqlekupiwiodgw",
+    password="e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c"
+    )
+    cursor = con.cursor()
+    if employeeID == '':
+
+      cursor.execute("""SELECT * FROM customerlogin WHERE Customer_username = %s AND Customer_password = %s""", (username, password ))
+      result = cursor.fetchone()
+      if result:
+          session['logged_in'] = True
+          return render_template('login.html', message='Logged in successful!')
+      else:
+        return render_template('login.html', message='Incorrect username or password')
     else:
-      msg = 'Incorrect username / password !'
-      return render_template('login.html', msg = msg)
+      cursor.execute("""SELECT * FROM workerlogin WHERE Worker_username = %s AND Worker_password = %s AND Employee_id = %s""", (username, password, employeeID ))
+      result = cursor.fetchone()
+      if result:
+          session['logged_in'] = True
+          return render_template('login.html', message='Logged in successful!')
+      else:
+        return render_template('login.html', message='Incorrect username/employeeID or password')
+    cursor.close()
+    con.commit()
+    con.close()
   return render_template('login.html')
 
 @app.route('/logout')
 def logout():
-    return redirect(url_for('login'))
+  session['logged_in'] = False
+    return redirect(url_for('login', message='Logged out successful!'))
 
 @app.route('/register', methods =['GET', 'POST'])
 def register():
@@ -79,14 +97,14 @@ def register():
         result = cursor.fetchall()
         for r in result:
           print (r)
-          msg = 'You have successfully registered !'
+          message = 'You have successfully registered !'
       else :
         cursor.execute("""INSERT INTO workerlogin VALUES (%s, %s, %s)""", (username, password, employeeID ))
         cursor.execute("SELECT * FROM workerlogin")
         result = cursor.fetchall()
         for r in result:
           print (r)
-          msg = 'You have successfully registered !'
+          message = 'You have successfully registered !'
       cursor.close()
       con.commit()
       con.close()
@@ -98,4 +116,5 @@ def menu():
 
 
 if __name__ == '__main__':
+  app.secret_key = os.urandom(12)
   app.run(debug=True)
