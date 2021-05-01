@@ -14,6 +14,19 @@ cur = con.cursor()
 secret_key="secret"
 
 
+
+mode = 'dev'
+
+db = SQLAlchemy(app)
+
+class menu(db.Model):
+  __tablename__ = 'menu'
+  id = db.Column(db.Integer, primary_key=True)
+  name = db.Column(db.String(20))
+
+  def __init__(self, name):
+    self.name = name
+
 @app.route('/')
 def homepage():
   return render_template('homepage.html')
@@ -26,11 +39,19 @@ def workMenu():
 def workOrder():
   try:
     # Connect to an existing database
-    connection = psycopg2.connect(user="jodywinters",
-                                  password="NonaGrey11",
-                                  host="localhost",
-                                  port="5432",
-                                  database="postgres")
+    if mode == 'dev':
+      connection = psycopg2.connect(user="jodywinters",
+                                    password="NonaGrey11",
+                                    host="localhost",
+                                    port="5432",
+                                    database="postgres")
+    else:
+      connection = psycopg2.connect(
+        host = "ec2-3-217-219-146.compute-1.amazonaws.com",
+        database= "d3duhguvo7sdom",
+        user="hqlekupiwiodgw",
+        password="e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c"
+      )
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM orders order by customer_username asc")
     records = cursor.fetchall()
@@ -50,16 +71,24 @@ def deletingOrder():
     username = request.form['username']
     try:
       # Connect to an existing database
-      connection = psycopg2.connect(user="jodywinters",
+      if mode == 'dev':
+        connection = psycopg2.connect(user="jodywinters",
                                     password="NonaGrey11",
                                     host="localhost",
                                     port="5432",
                                     database="postgres")
+      else:
+        connection = psycopg2.connect(
+          host = "ec2-3-217-219-146.compute-1.amazonaws.com",
+          database= "d3duhguvo7sdom",
+          user="hqlekupiwiodgw",
+          password="e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c"
+        )
       cursor = connection.cursor()
       deletequery = ("""delete from orders where customer_username = '{}'""".format(username))
       cursor.execute(deletequery)
       connection.commit()
-      cursor.execute("SELECT * FROM orders")
+      cursor.execute("SELECT * FROM orders order by customer_username asc")
       records = cursor.fetchall()
 
     except (Exception, Error) as error:

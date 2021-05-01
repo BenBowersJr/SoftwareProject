@@ -70,14 +70,18 @@ td {
 }
 
 form {
-  width: 750px;
+  width: 470px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   margin-right: auto;
   margin-left: auto;
   margin-top: 35px;
 }
 
 p {
-  width: 750px;
+  width: 470px;
   margin-right: auto;
   margin-left: auto;
   font-size: 20px;
@@ -86,12 +90,48 @@ p {
 
 .textbox {
   height: 25px;
+  margin-bottom: 11px;
 }
 
 input[type=submit] {
-  width: 130px;  height: 30px;
+  width: 130px;  
+  height: 30px;
+  margin-bottom: 30px;
 }
 
 input[type=checkbox] {
   margin-left: 6px;
+}
+
+@media screen and (max-width: 800px) {
+  aside {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-top: 0;
+    position: relative;
+    height: 60px;
+    width: 100%;
+    background-color: rgb(45, 102, 45);
+  }
+
+  .side {
+    padding: 5px 0 5px 0;
+    margin-top: auto;
+    margin-bottom: auto;
+    text-decoration: none;
+    font-size: 20px;
+    color: #d4d4d4;
+    display: block;
+  }
+
+  body {
+    margin-left: 0px;
+  }
+
+  h1, header a {
+    font-size: 25px;
+  }
 }
