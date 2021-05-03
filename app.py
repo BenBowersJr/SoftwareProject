@@ -8,21 +8,27 @@ from sqlalchemy import *
 
 app = Flask(__name__)
 
-
-
-con = psycopg2.connect(
-  host = "ec2-3-217-219-146.compute-1.amazonaws.com",
-  database= "d3duhguvo7sdom",
-  user="hqlekupiwiodgw",
-  password="e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c"
-)
-cur = con.cursor()
+mode = 'dev'
 
 app.secret_key = os.urandom(12)
 
-mode = 'dev'
-
 db = SQLAlchemy(app)
+
+if mode == 'dev':
+  con = psycopg2.connect(user="jodywinters",
+                                  password="NonaGrey11",
+                                  host="localhost",
+                                  port="5432",
+                                  database="postgres")
+else:
+  con = psycopg2.connect(
+    host = "ec2-3-217-219-146.compute-1.amazonaws.com",
+    database= "d3duhguvo7sdom",
+    user="hqlekupiwiodgw",
+    password="e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c"
+  )
+
+cursor = con.cursor()
 
 class menu(db.Model):
   __tablename__ = 'menu'
@@ -44,84 +50,26 @@ def workMenu():
 
 @app.route('/work-orders', methods=['POST', 'GET'])
 def workOrder():
-  try:
-    # Connect to an existing database
-    if mode == 'dev':
-      connection = psycopg2.connect(user="jodywinters",
-                                    password="NonaGrey11",
-                                    host="localhost",
-                                    port="5432",
-                                    database="postgres")
-    else:
-      connection = psycopg2.connect(
-        host = "ec2-3-217-219-146.compute-1.amazonaws.com",
-        database= "d3duhguvo7sdom",
-        user="hqlekupiwiodgw",
-        password="e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c"
-      )
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM orders order by customer_username asc")
-    records = cursor.fetchall()
+  
+  cursor.execute("SELECT * FROM orders order by customer_username asc")
+  records = cursor.fetchall()
 
-  except (Exception, Error) as error:
-      print("Error while connecting to PostgreSQL", error)
-  finally:
-    if (connection):
-        cursor.close()
-        connection.close()
-        print("PostgreSQL connection is closed")
   return render_template('work-orders.html', records = records)
 
 @app.route('/submit', methods=['POST', 'GET'])
 def deletingOrder():
   if request.method == 'POST':
     username = request.form['username']
-    try:
-      # Connect to an existing database
-      if mode == 'dev':
-        connection = psycopg2.connect(user="jodywinters",
-                                    password="NonaGrey11",
-                                    host="localhost",
-                                    port="5432",
-                                    database="postgres")
-      else:
-        connection = psycopg2.connect(
-          host = "ec2-3-217-219-146.compute-1.amazonaws.com",
-          database= "d3duhguvo7sdom",
-          user="hqlekupiwiodgw",
-          password="e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c"
-        )
-      cursor = connection.cursor()
-      deletequery = ("""delete from orders where customer_username = '{}'""".format(username))
-      cursor.execute(deletequery)
-      connection.commit()
-      cursor.execute("SELECT * FROM orders order by customer_username asc")
-      records = cursor.fetchall()
-
-    except (Exception, Error) as error:
-        print("Error while connecting to PostgreSQL", error)
-    finally:
-      if (connection):
-          cursor.close()
-          connection.close()
-          print("PostgreSQL connection is closed")
+    deletequery = ("""delete from orders where customer_username = '{}'""".format(username))
+    cursor.execute(deletequery)
+    con.commit()
+    cursor.execute("SELECT * FROM orders order by customer_username asc")
+    records = cursor.fetchall()
     return render_template("work-orders.html", records = records)
 
 @app.route('/login', methods =['GET', 'POST'])
 def login():
-  if request.method == 'POST':
-    username = request.form['username']
-    password = request.form['password']
-    employeeID = request.form['employeeID']
-    con = psycopg2.connect(
-    host = "ec2-3-217-219-146.compute-1.amazonaws.com",
-    database= "d3duhguvo7sdom",
-    user="hqlekupiwiodgw",
-    password="e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c"
-    )
-    cursor = con.cursor()
     if employeeID == '':
-
       cursor.execute("""SELECT * FROM customerlogin WHERE Customer_username = %s AND Customer_password = %s""", (username, password ))
       result = cursor.fetchone()
       if result:
@@ -130,17 +78,13 @@ def login():
       else:
         return render_template('login.html', message='Incorrect username or password')
     else:
-      cursor.execute("""SELECT * FROM workerlogin WHERE Worker_username = %s AND Worker_password = %s AND Employee_id = %s""", (username, password, employeeID ))
+      cursor.execute("""SELECT * FROM workerlogin WHERE worker_username = %s AND worker_password = %s AND wmployee_id = %s""", (username, password, employeeID ))
       result = cursor.fetchone()
       if result:
           session['logged_in'] = True
           return render_template('work-menu.html', message='Logged in successful!')
       else:
         return render_template('login.html', message='Incorrect username/employeeID or password')
-    cursor.close()
-    con.commit()
-    con.close()
-  return render_template('login.html')
 
 @app.route('/logout')
 def logout():
@@ -153,16 +97,6 @@ def register():
       username = request.form['username']
       password = request.form['password']
       employeeID = request.form['employeeID']
-      if len(username) > 8 :
-        return render_template('register.html', message='Username is too long.')
-
-      con = psycopg2.connect(
-        host = "ec2-3-217-219-146.compute-1.amazonaws.com",
-        database= "d3duhguvo7sdom",
-        user="hqlekupiwiodgw",
-        password="e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c"
-      )
-      cursor = con.cursor()
       if employeeID == '':
         cursor.execute("""INSERT INTO customerlogin VALUES (%s, %s)""", (username, password ))
         con.commit()
@@ -177,26 +111,17 @@ def register():
         result = cursor.fetchall()
         if result:
           return render_template('login.html', message='You have successfully registered !')
-      cursor.close()
-      con.close()
     return render_template('register.html')
 
 @app.route('/customer-menu', methods=['POST', 'GET'])
 def menu():
-  ### Connecting the database ###
-  con = psycopg2.connect(
-  host = "ec2-3-217-219-146.compute-1.amazonaws.com",
-  database= "d3duhguvo7sdom",
-  user="hqlekupiwiodgw",
-  password="e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c")
-  cur = con.cursor()
 
   #### Getting menu from database #####
-  cur.execute('SELECT * FROM pizzasizes')
+  cursor.execute('SELECT * FROM pizzasizes')
   allSizes = cur.fetchall()
-  cur.execute('SELECT * FROM pizzatoppings')
+  cursor.execute('SELECT * FROM pizzatoppings')
   allToppings = cur.fetchall()
-  cur.execute('SELECT * FROM pizzacrust')
+  cursor.execute('SELECT * FROM pizzacrust')
   allCrusts = cur.fetchall()
 
   ##### this is converting the tuples returned from the SQL query into strings so they display cleanly on the menu#####
@@ -231,14 +156,9 @@ def menu():
       ### make the cart
       session['cart'] = newCartItem
 
-    cur.close()
-    con.close()
     return render_template('cmenu.html', crusts=fixedCrusts, sizes=fixedSizes, toppings=fixedToppings)
 
   if request.method == 'GET':
-    
-    cur.close()
-    con.close()
 
     return render_template('cmenu.html', crusts=fixedCrusts, sizes=fixedSizes, toppings=fixedToppings)
 
@@ -253,10 +173,6 @@ def checkout():
   return "not done yet"
 
 
-
-#disconnects the database and cursor
-cur.close()
-con.close()
 
 if __name__ == '__main__':
   app.run(debug=True)
