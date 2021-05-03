@@ -1,6 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, request, session
 import os
-from config import Config
 from flask_sqlalchemy import SQLAlchemy
 import psycopg2, time
 from psycopg2 import Error
