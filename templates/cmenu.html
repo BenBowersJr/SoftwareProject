@@ -5,6 +5,9 @@
 {% endblock %}
 
 {% block body %}
+{% if message %}
+<p>{{ message }}</p>
+{% endif %}
   <form action="" method="post">
     <fieldset class="pizza-size">
       <legend>Pizza Size</legend>

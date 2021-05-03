@@ -25,6 +25,7 @@ class menu(db.Model):
 def homepage():
   if not session.get('logged_in'):
     return render_template('homepage.html')
+  return render_template('homepage.html')
 
 @app.route('/work-menu')
 def workMenu():
@@ -53,7 +54,7 @@ def login():
       result = cursor.fetchone()
       if result:
           session['logged_in'] = True
-          return render_template('login.html', message='Logged in successful!')
+          return render_template('cmenu.html', message='Logged in successful!')
       else:
         return render_template('login.html', message='Incorrect username or password')
     else:
@@ -61,7 +62,7 @@ def login():
       result = cursor.fetchone()
       if result:
           session['logged_in'] = True
-          return render_template('login.html', message='Logged in successful!')
+          return render_template('work-menu.html', message='Logged in successful!')
       else:
         return render_template('login.html', message='Incorrect username/employeeID or password')
     cursor.close()
@@ -95,16 +96,14 @@ def register():
         cursor.execute("""INSERT INTO customerlogin VALUES (%s, %s)""", (username, password ))
         cursor.execute("SELECT * FROM customerlogin")
         result = cursor.fetchall()
-        for r in result:
-          print (r)
-          message = 'You have successfully registered !'
+        if result:
+          return render_template('login.html', message='You have successfully registered !')
       else :
         cursor.execute("""INSERT INTO workerlogin VALUES (%s, %s, %s)""", (username, password, employeeID ))
         cursor.execute("SELECT * FROM workerlogin")
         result = cursor.fetchall()
-        for r in result:
-          print (r)
-          message = 'You have successfully registered !'
+        if result:
+          return render_template('login.html', message='You have successfully registered !')
       cursor.close()
       con.commit()
       con.close()
