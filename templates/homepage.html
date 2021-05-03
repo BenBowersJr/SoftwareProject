@@ -38,9 +38,8 @@
   
     <nav>
       <ul>
-        <li><a href="">Homepage</a></li>
+        <li><a href="{{url_for('homepage')}}">Homepage</a></li>
         <li> <a href="{{url_for('menu')}}">Menu</a></li>
-        <li> <a href="">Cart</a></li>
       </ul>
     </nav>
   </header>
@@ -51,8 +50,8 @@
     <p>Here at the Bulldog Pizza Shop, you can order take out or delivery online.
   Don't forget to register or login.</p>
   <div>
-    <a href="http://localhost:5000/register">Register</a>
-    <a href="http://localhost:5000/login">Login</a>
+    <a href="{{url_for('register')}}">Register</a>
+    <a href="{{url_for('login')}}">Login</a>
   </div>
 </section>
 
