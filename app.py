@@ -128,7 +128,7 @@ def login():
           session['logged_in'] = True
           return render_template('cmenu.html', message='Logged in successful!')
       else:
-        return render_template('login.html', message='Incorrect username or password')
+        return render_template('login.html', message='Incorrect username or password. Please register if an account does not exist.')
     else:
       cursor.execute("""SELECT * FROM workerlogin WHERE Worker_username = %s AND Worker_password = %s AND Employee_id = %s""", (username, password, employeeID ))
       result = cursor.fetchone()
@@ -136,7 +136,7 @@ def login():
           session['logged_in'] = True
           return render_template('work-menu.html', message='Logged in successful!')
       else:
-        return render_template('login.html', message='Incorrect username/employeeID or password')
+        return render_template('login.html', message='Incorrect username/employeeID or password. Please register if an account does not exist.')
     cursor.close()
     con.commit()
     con.close()
@@ -163,7 +163,12 @@ def register():
         password="e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c"
       )
       cursor = con.cursor()
-      if employeeID == '':
+      cursor.execute("""SELECT * FROM customerlogin WHERE Customer_username = %s AND Customer_password = %s""", (username, password ))
+      cursor.execute("""SELECT * FROM workerlogin WHERE Worker_username = %s AND Worker_password = %s AND Employee_id = %s""", (username, password, employeeID ))
+      result = cursor.fetchone()
+      if result:
+        return render_template('register.html', message='Account already exists!')
+      elif employeeID == '':
         cursor.execute("""INSERT INTO customerlogin VALUES (%s, %s)""", (username, password ))
         con.commit()
         cursor.execute("SELECT * FROM customerlogin")
