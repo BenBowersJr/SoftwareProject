@@ -9,6 +9,7 @@ from sqlalchemy import *
 app = Flask(__name__)
 
 
+
 con = psycopg2.connect(
   host = "ec2-3-217-219-146.compute-1.amazonaws.com",
   database= "d3duhguvo7sdom",
