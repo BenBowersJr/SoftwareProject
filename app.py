@@ -163,20 +163,20 @@ def register():
       )
       cursor = con.cursor()
       if employeeID == '':
-
         cursor.execute("""INSERT INTO customerlogin VALUES (%s, %s)""", (username, password ))
+        con.commit()
         cursor.execute("SELECT * FROM customerlogin")
         result = cursor.fetchall()
         if result:
           return render_template('login.html', message='You have successfully registered !')
       else :
         cursor.execute("""INSERT INTO workerlogin VALUES (%s, %s, %s)""", (username, password, employeeID ))
+        con.commit()
         cursor.execute("SELECT * FROM workerlogin")
         result = cursor.fetchall()
         if result:
           return render_template('login.html', message='You have successfully registered !')
       cursor.close()
-      con.commit()
       con.close()
     return render_template('register.html')
 
