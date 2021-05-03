@@ -5,6 +5,10 @@
 {% endblock %}
 
 {% block body %}
+
+{% if message %}
+<p>{{ message }}</p>
+{% endif %}
   <form action="" method="post">
     <fieldset class="pizza-size">
       <legend>Pizza Size</legend>
@@ -13,30 +17,59 @@
       <label><input type="radio" name="pizza-size" value="large">Large</label>
       <label><input type="radio" name="pizza-size" value="x-large">X-Large</label>
     </fieldset>
+  <div class="complete-menu">
+    <div class="menu">
+      <h2>Our Menu</h2>
+      <form action="" method="post">
+        <fieldset>
+          <legend>Select Your Pizza Size</legend>
+          {% for item in sizes %}
+          <label><input type="radio" name="size" value="{{item}}">{{item}}</label>
+          {%endfor%}
+        </fieldset>
+        <fieldset>
+          <legend>Select Your Pizza Crust</legend>
+          {% for item in crusts %}
+          <label><input type="radio" name="crust" value="{{item}}">{{item}}</label>
+          {%endfor%}
+        </fieldset>
+        <fieldset>
+          <legend>Select Your Pizza Toppings</legend>
+          {%for item in toppings%}
+          <label><input type="checkbox" name="toppings" value="{{item}}">{{item}}</label>
+          {%endfor%}
+        </fieldset>
+        <button type="submit">Add to Cart</button>
+      </form>
+    </div>
 
-    <fieldset class="meat-toppings">
-      <legend>Meat Toppings</legend>
-      <label><input type="checkbox" name="pepperoni">Pepperoni</label>
-      <label><input type="checkbox" name="sausage">Sausage</label>
-      <label><input type="checkbox" name="ham">Ham</label>
-      <label><input type="checkbox" name="bacon">Bacon</label>
-      <label><input type="checkbox" name="salami">Salami</label>
-      <label><input type="checkbox" name="steak">Steak</label>
-      <label><input type="checkbox" name="chicken">Chicken</label>
-    </fieldset>
+    <div class="cart">
+      <h2>Your Cart</h2>
+      {% if 'cart' in session %}
+      <div class="cart-buttons">
+        <form action="/clear" method="post">
+          <button type="submit">Clear Cart</button>
+        </form>
+        <form action="/checkout">
+          <button type="submit">CheckOut</button>
+        </form>
+      </div>
+        {% for key,val in session['cart'].items() %}
+          <div class="cart-item">
+            <p>Pizza Size: {{val.size}}</p>
+            <p>Pizza Crust: {{val.crust}}</p>
+            
+            <p>Pizza Toppings:{% for topping in val.toppings%} {{topping}} {% endfor %}</p>
+            
+          </div>
+        {% endfor%}
+        
+      
+      {% endif %}
 
-    <fieldset class="veggie-toppings">
-      <legend>Veggie Toppings</legend>
-      <label><input type="checkbox" name="onions">Onions</label>
-      <label><input type="checkbox" name="banana-peppers">Banana Peppers</label>
-      <label><input type="checkbox" name="tomatoe">Tomatoes</label>
-      <label><input type="checkbox" name="olives">Olives</label>
-      <label><input type="checkbox" name="mushrooms">Mushrooms</label>
-      <label><input type="checkbox" name="pineapple">Pineapple</label>
-      <label><input type="checkbox" name="green-peppers">Green Peppers</label>
-      <label><input type="checkbox" name="spinach">Spinach</label>
-      <label><input type="checkbox" name="red-peppers">Red Peppers</label>
-    </fieldset>
-    <input type="submit" value="Add To Cart!">
-  </form>
+      {% if 'cart' not in session: %}
+        <p>Unfortuately your cart is empty, add items!</p>
+      {% endif %}
+    </div>
+  </div>
 {% endblock %}

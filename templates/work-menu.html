@@ -8,9 +8,13 @@
 
   <body>
       <header>
-         <h1>717.000.0000</h1>
-         <h1>Bulldog's Pizza</h1>
-         <a href="http://localhost:5000/">Logout</a>
+          <p>717.000.0000</p>
+          <p>Bulldog's Pizza</p>
+          {% if message %}
+          <p>{{ message }}</p>
+          {% endif %}
+          <a href="http://localhost:5000/">Logout</a>
+
       </header>
       <aside>
          <a class="side" href="http://localhost:5000/work-orders">Orders</a>
