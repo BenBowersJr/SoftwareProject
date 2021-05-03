@@ -44,9 +44,62 @@ def homepage():
     return render_template('homepage.html')
   return render_template('homepage.html')
 
-@app.route('/work-menu')
+@app.route('/work-menu', methods=['POST', 'GET'])
 def workMenu():
-  return render_template('work-menu.html')
+ 
+  cursor.execute('SELECT * FROM pizzatoppings')
+  allToppings = cursor.fetchall()
+  cursor.execute('SELECT * FROM pizzacrust')
+  allCrusts = cursor.fetchall()
+
+  global fixedCrusts, fixedToppings
+
+  fixedToppings = []
+  for tup in allToppings:
+    for char in tup:
+      fixedToppings.append(char)
+  fixedCrusts = []
+  for tup in allCrusts:
+    for char in tup:
+      fixedCrusts.append(char)
+  return render_template('work-menu.html', crusts=fixedCrusts, toppings=fixedToppings)
+
+@app.route('/addcrust', methods=['POST', 'GET'])
+def addcrust():
+  if request.method == 'POST':
+    crust = request.form['addcrust']
+    cursor.execute("""insert into pizzacrust (crust) values ('{}')""".format(crust))
+    con.commit()
+    
+  return workMenu()
+
+@app.route('/removecrust', methods=['POST', 'GET'])
+def removecrust():
+  if request.method == 'POST':
+    crust = request.form['removecrust']
+    cursor.execute("""delete from pizzacrust where crust = '{}'""".format(crust))
+    con.commit()
+    
+  return workMenu()
+
+@app.route('/addtoppings', methods=['POST', 'GET'])
+def addtopping():
+  if request.method == 'POST':
+    toppings = request.form['addtoppings']
+    cursor.execute("""insert into pizzatoppings (toppings) values ('{}')""".format(toppings))
+    con.commit()
+    
+  return workMenu()
+
+@app.route('/removetoppings', methods=['POST', 'GET'])
+def removetopping():
+  if request.method == 'POST':
+    toppings = request.form['removetoppings']
+    cursor.execute("""delete from pizzatoppings where toppings = '{}'""".format(toppings))
+    con.commit()
+    
+  return workMenu()
+
 
 @app.route('/work-orders', methods=['POST', 'GET'])
 def workOrder():
@@ -69,22 +122,30 @@ def deletingOrder():
 
 @app.route('/login', methods =['GET', 'POST'])
 def login():
-    if employeeID == '':
-      cursor.execute("""SELECT * FROM customerlogin WHERE Customer_username = %s AND Customer_password = %s""", (username, password ))
-      result = cursor.fetchone()
-      if result:
-          session['logged_in'] = True
-          return render_template('cmenu.html', message='Logged in successful!')
+    if request.method == 'POST':
+      username = request.form['username']
+      password = request.form['password']
+      employeeID = request.form['employeeID']
+      if employeeID == '':
+        cursor.execute("""SELECT * FROM customerlogin WHERE Customer_username = %s AND Customer_password = %s""", (username, password ))
+        result = cursor.fetchone()
+        if result:
+            session['logged_in'] = True
+            return render_template('cmenu.html', message='Logged in successful!')
+        else:
+          return render_template('login.html', message='Incorrect username or password')
       else:
-        return render_template('login.html', message='Incorrect username or password')
-    else:
-      cursor.execute("""SELECT * FROM workerlogin WHERE worker_username = %s AND worker_password = %s AND wmployee_id = %s""", (username, password, employeeID ))
-      result = cursor.fetchone()
-      if result:
-          session['logged_in'] = True
-          return render_template('work-menu.html', message='Logged in successful!')
-      else:
-        return render_template('login.html', message='Incorrect username/employeeID or password')
+        print('I work')
+        cursor.execute("""SELECT * FROM workerlogin WHERE Worker_username = %s AND Worker_password = %s AND Employee_id = %s""", (username, password, employeeID ))
+        result = cursor.fetchone()
+        if result:
+            session['logged_in'] = True
+            print('I work')
+            return workOrder()
+        else:
+          return render_template('login.html', message='Incorrect username/employeeID or password')
+    return render_template('login.html')
+
 
 @app.route('/logout')
 def logout():
@@ -98,14 +159,14 @@ def register():
       password = request.form['password']
       employeeID = request.form['employeeID']
       if employeeID == '':
-        cursor.execute("""INSERT INTO customerlogin VALUES (%s, %s)""", (username, password ))
+        cursor.execute("""INSERT INTO customerlogin (customer_username, customer_password) VALUES (%s, %s)""", (username, password ))
         con.commit()
         cursor.execute("SELECT * FROM customerlogin")
         result = cursor.fetchall()
         if result:
           return render_template('login.html', message='You have successfully registered !')
       else :
-        cursor.execute("""INSERT INTO workerlogin VALUES (%s, %s, %s)""", (username, password, employeeID ))
+        cursor.execute("""INSERT INTO workerlogin (worker_username, worker_password, employee_id) VALUES (%s, %s, %s)""", (username, password, employeeID ))
         con.commit()
         cursor.execute("SELECT * FROM workerlogin")
         result = cursor.fetchall()
@@ -118,11 +179,11 @@ def menu():
 
   #### Getting menu from database #####
   cursor.execute('SELECT * FROM pizzasizes')
-  allSizes = cur.fetchall()
+  allSizes = cursor.fetchall()
   cursor.execute('SELECT * FROM pizzatoppings')
-  allToppings = cur.fetchall()
+  allToppings = cursor.fetchall()
   cursor.execute('SELECT * FROM pizzacrust')
-  allCrusts = cur.fetchall()
+  allCrusts = cursor.fetchall()
 
   ##### this is converting the tuples returned from the SQL query into strings so they display cleanly on the menu#####
   global fixedCrusts, fixedToppings, fixedSizes
