@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Bulldog Pizza</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='work-menu.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/workMenu.css') }}">
   </head>
 
   <body>
@@ -14,31 +14,14 @@
           <p>{{ message }}</p>
           {% endif %}
           <a href="http://localhost:5000/">Logout</a>
+
       </header>
       <aside>
-          <a href="http://localhost:5000/work-menu">Menu</a>
-          <a href="http://localhost:5000/work-orders">Orders</a>
-          <a href="#">Pay Stub</a>
-          <a href="#">Messages</a>
-          <a href="#">Time Off</a>
+         <a class="side" href="http://localhost:5000/work-orders">Orders</a>
+         <a class="side" href="http://localhost:5000/work-menu">Menu</a>
+         <a class="side" href="#">Pay Stub</a>
+         <a class="side" href="#">Messages</a>
+         <a class="side" href="#">Time Off</a>
       </aside>
-      <table border = 5>
-        <tr>
-           <th class="item">Item</th>
-           <th class="size">Size</th>
-           <th class="option1">Option 1</th>
-           <th class="option2">Option 2</th>
-           <th class="price">Price</th>
-        </tr>
-        {% for key, value in result.items() %}
-           <tr>
-              <td class="item"> {{ key }} </td>
-              <td class="size"> {{ value }} </td>
-              <td class="option1"> {{ value }} </td>
-              <td class="option2"> {{ value }} </td>
-              <td class="price"> {{ value }} </td>
-           </tr>
-        {% endfor %}
-     </table>
   </body>
 </html>
