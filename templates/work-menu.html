@@ -20,36 +20,40 @@
          <a class="side" href="#">Time Off</a>
       </aside>
 
-      <div>
-        <h2>Pizza Crusts</h2>
+      
+      <h2>Pizza Crusts</h2>
+      <div class='item'>
         {% for item in crusts %}
         <p>{{item}}</p>
         {%endfor%}
       </div>
+      <div class='form'>
+        <form action="/addcrust" method= 'POST'>
+          <input class="textbox" type="text" size="40px" name="addcrust" placeholder="CRUST TO ADD"/>
+          <input class='add' type="submit" value="ADD CRUST"/>
+        </form>
+        <form action="/removecrust" method= 'POST'>
+          <input class="textbox" type="text" size="40px" name="removecrust" placeholder="CRUST TO REMOVE"/>
+          <input class='delete' type="submit" value="REMOVE CRUST"/>
+        </form>
+      </div>
 
-      <form action="/addcrust" method= 'POST'>
-        <input class="textbox" type="text" size="40px" name="addcrust" placeholder="Crust to Add"/>
-        <input type="submit" value="ADD CRUST"/>
-      </form>
-      <form action="/removecrust" method= 'POST'>
-        <input class="textbox" type="text" size="40px" name="removecrust" placeholder="Crust to Remove"/>
-        <input type="submit" value="REMOVE CRUST"/>
-      </form>
-
-      <div>
-        <h2>Pizza Toppings</h2>
+      
+      <h2>Pizza Toppings</h2>
+      <div class='item'>
         {%for item in toppings%}
         <p>{{item}}</p>
         {%endfor%}
       </div>
-
-      <form action="/addtoppings" method= 'POST'>
-        <input class="textbox" type="text" size="40px" name="addtoppings" placeholder="Topping to Add"/>
-        <input type="submit" value="ADD TOPPING"/>
-      </form>
-      <form action="/removetoppings" method= 'POST'>
-        <input class="textbox" type="text" size="40px" name="removetoppings" placeholder="Topping to Remove"/>
-        <input type="submit" value="REMOVE TOPPING"/>
-      </form>
+      <div class='form'>
+        <form action="/addtoppings" method= 'POST'>
+          <input class="textbox" type="text" size="40px" name="addtoppings" placeholder="TOPPING TO ADD"/>
+          <input class='add' type="submit" value="ADD TOPPING"/>
+        </form>
+        <form action="/removetoppings" method= 'POST'>
+          <input class="textbox" type="text" size="40px" name="removetoppings" placeholder="TOPPING TO REMOVE"/>
+          <input class='delete' type="submit" value="REMOVE TOPPING"/>
+        </form>
+      </div>
   </body>
 </html>
