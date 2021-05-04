@@ -15,9 +15,45 @@
       <aside>
          <a class="side" href="{{url_for('workOrder')}}">Orders</a>
          <a class="side" href="{{url_for('workMenu')}}">Menu</a>
-         <a class="side" href="#">Pay Stub</a>
-         <a class="side" href="#">Messages</a>
-         <a class="side" href="#">Time Off</a>
+         <a class="side" href="{{url_for('payStubs')}}">Pay Stub</a>
+         <a class="side" href="{{url_for('messages')}}">Messages</a>
+         <a class="side" href="{{url_for('timeOff')}}">Time Off</a>
       </aside>
+
+      
+      <h2>Pizza Crusts</h2>
+      <div class='item'>
+        {% for item in crusts %}
+        <p>{{item}}</p>
+        {%endfor%}
+      </div>
+      <div class='form'>
+        <form action="/addcrust" method= 'POST'>
+          <input class="textbox" type="text" size="40px" name="addcrust" placeholder="CRUST TO ADD"/>
+          <input class='add' type="submit" value="ADD CRUST"/>
+        </form>
+        <form action="/removecrust" method= 'POST'>
+          <input class="textbox" type="text" size="40px" name="removecrust" placeholder="CRUST TO REMOVE"/>
+          <input class='delete' type="submit" value="REMOVE CRUST"/>
+        </form>
+      </div>
+
+      
+      <h2>Pizza Toppings</h2>
+      <div class='item'>
+        {%for item in toppings%}
+        <p>{{item}}</p>
+        {%endfor%}
+      </div>
+      <div class='form'>
+        <form action="/addtoppings" method= 'POST'>
+          <input class="textbox" type="text" size="40px" name="addtoppings" placeholder="TOPPING TO ADD"/>
+          <input class='add' type="submit" value="ADD TOPPING"/>
+        </form>
+        <form action="/removetoppings" method= 'POST'>
+          <input class="textbox" type="text" size="40px" name="removetoppings" placeholder="TOPPING TO REMOVE"/>
+          <input class='delete' type="submit" value="REMOVE TOPPING"/>
+        </form>
+      </div>
   </body>
 </html>
