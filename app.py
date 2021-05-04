@@ -101,6 +101,18 @@ def removetopping():
   return workMenu()
 
 
+@app.route('/pay-stubs')
+def payStubs():
+  return render_template('pay-stubs.html')
+
+@app.route('/messages')
+def messages():
+  return render_template('messages.html')
+
+@app.route('/time-off')
+def timeOff():
+  return render_template('time-off.html')
+
 @app.route('/work-orders', methods=['POST', 'GET'])
 def workOrder():
   
@@ -216,8 +228,8 @@ def menu():
   if request.method == 'POST':
     #create a Dict of the new item, time is just for a unique ID
     newCartItem = { f"{time.time()}": {
-      'size': request.form['size'], 
-      'crust': request.form['crust'], 
+      'size': request.form['size'],
+      'crust': request.form['crust'],
       'toppings': request.form.getlist('toppings')
       }
     }
@@ -232,6 +244,12 @@ def menu():
     return render_template('cmenu.html', crusts=fixedCrusts, sizes=fixedSizes, toppings=fixedToppings)
 
   if request.method == 'GET':
+<<<<<<< HEAD
+
+    cur.close()
+    con.close()
+=======
+>>>>>>> ea9c1d05ccc708ab671ed3dd68d16843f1752891
 
     return render_template('cmenu.html', crusts=fixedCrusts, sizes=fixedSizes, toppings=fixedToppings)
 
