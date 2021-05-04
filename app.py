@@ -8,7 +8,7 @@ from sqlalchemy import *
 
 app = Flask(__name__)
 
-mode = 'dev'
+mode = 'de'
 
 app.secret_key = os.urandom(12)
 
