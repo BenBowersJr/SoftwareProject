@@ -164,7 +164,7 @@ def login():
           return workOrder()
       else:
         return render_template('login.html', message='Incorrect username/employeeID or password')
-    return render_template('login.html')
+  return render_template('login.html')
 
 
 @app.route('/logout')
