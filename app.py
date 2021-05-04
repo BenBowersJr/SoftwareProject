@@ -244,12 +244,6 @@ def menu():
     return render_template('cmenu.html', crusts=fixedCrusts, sizes=fixedSizes, toppings=fixedToppings)
 
   if request.method == 'GET':
-<<<<<<< HEAD
-
-    cur.close()
-    con.close()
-=======
->>>>>>> ea9c1d05ccc708ab671ed3dd68d16843f1752891
 
     return render_template('cmenu.html', crusts=fixedCrusts, sizes=fixedSizes, toppings=fixedToppings)
 
