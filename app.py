@@ -132,71 +132,83 @@ def deletingOrder():
     records = cursor.fetchall()
     return render_template("work-orders.html", records = records)
 
-@app.route('/login', methods =['GET', 'POST'])
+@app.route('/login', methods =['POST', 'GET'])
 def login():
+    message = ''
     if request.method == 'POST':
       username = request.form['username']
       password = request.form['password']
       employeeID = request.form['employeeID']
+      if username == '' or password == '':
+        message = 'Please fill out form!'
+        return render_template('login.html', message = message)
       if employeeID == '':
         cursor.execute("""SELECT * FROM customerlogin WHERE Customer_username = %s AND Customer_password = %s""", (username, password ))
         result = cursor.fetchone()
         if result:
             session['logged_in'] = True
-            return render_template('cmenu.html', message='Logged in successful!')
+            return redirect(url_for('menu'))
         else:
-          return render_template('login.html', message='Incorrect username or password')
+          message = 'Wrong username or password!'
+          return render_template('login.html', message = message)
       else:
-        print('I work')
         cursor.execute("""SELECT * FROM workerlogin WHERE Worker_username = %s AND Worker_password = %s AND Employee_id = %s""", (username, password, employeeID ))
         result = cursor.fetchone()
         if result:
             session['logged_in'] = True
-            print('I work')
-            return workOrder()
+            return redirect(url_for('workOrder'))
         else:
-          return render_template('login.html', message='Incorrect username/employeeID or password')
-    return render_template('login.html')
+          message = 'Wrong username, employeeID, or password!'
+          return render_template('login.html', message = message)
+    return render_template('login.html', message = message)
 
 
 @app.route('/logout')
 def logout():
   session['logged_in'] = False
-  return redirect(url_for('login', message='Logged out successful!'))
+  return redirect(url_for('login'))
 
-@app.route('/register', methods =['GET', 'POST'])
+@app.route('/register', methods =['POST', 'GET'])
 def register():
+    message = ''
     if request.method == 'POST':
       username = request.form['username']
       password = request.form['password']
       employeeID = request.form['employeeID']
-
-      if employeeID == '':
-        cursor.execute("""INSERT INTO customerlogin (customer_username, customer_password) VALUES (%s, %s)""", (username, password ))
-
+      if username == '' or password == '':
+        message = 'Please fill out form!'
+        return render_template('register.html', message = message)
       if len(username) > 8 :
-        return render_template('register.html', message='Username is too long.')
+        message = 'Username is too long.'
+        return render_template('register.html', message = message)
 
       cursor.execute("""SELECT * FROM customerlogin WHERE Customer_username = %s AND Customer_password = %s""", (username, password ))
+      result = cursor.fetchone()
+      if result:
+        message = 'Account already exists!'
+        return render_template('register.html', message = message)
       cursor.execute("""SELECT * FROM workerlogin WHERE Worker_username = %s AND Worker_password = %s AND Employee_id = %s""", (username, password, employeeID ))
       result = cursor.fetchone()
       if result:
-        return render_template('register.html', message='Account already exists!')
-      elif employeeID == '':
+        message = 'Account already exists!'
+        return render_template('register.html', message = message)
+      if employeeID == '':
         cursor.execute("""INSERT INTO customerlogin VALUES (%s, %s)""", (username, password ))
         con.commit()
         cursor.execute("SELECT * FROM customerlogin")
         result = cursor.fetchall()
         if result:
-          return render_template('login.html', message='You have successfully registered !')
+          message = 'You have successfully registered!'
+          return render_template('register.html', message = message)
       else :
-        cursor.execute("""INSERT INTO workerlogin (worker_username, worker_password, employee_id) VALUES (%s, %s, %s)""", (username, password, employeeID ))
+        cursor.execute("""INSERT INTO workerlogin VALUES (%s, %s, %s)""", (username, password, employeeID ))
         con.commit()
         cursor.execute("SELECT * FROM workerlogin")
         result = cursor.fetchall()
         if result:
-          return render_template('login.html', message='You have successfully registered !')
-    return render_template('register.html')
+          message = 'You have successfully registered!'
+          return render_template('register.html', message = message)
+    return render_template('register.html', message = message)
 
 @app.route('/customer-menu', methods=['POST', 'GET'])
 def menu():
