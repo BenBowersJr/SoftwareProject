@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Checkout</title>
+{% endblock%}
+
+
+{% block body %}
+<div class="checkout">
+  <div class="checkout-items">
+    {% if 'cart' in session %}
+    <h2>Your Cart</h2>
+      {% for key,val in session['cart'].items() %}
+        <div class="cart-item">
+          <p>Pizza Crust: {{val.crust}}</p>
+          <p>Pizza Toppings:{% for topping in val.toppings%} {{topping}} {% endfor %}</p>
+        </div>
+      {% endfor%}
+    <p>Total Price = ${{session['total']}}</p>
+    {% endif %}
+    {% if 'cart' not in session%}
+      <p>You have no items in your Cart</p>
+    {% endif %}
+  </div>
+
+  <form action="" method="post" >
+    <h2>Billing Information</h2>
+    <label for=""><input type="text" name="adress" id="">Address</label>
+    <label for=""><input type="text" name="city" id="">City</label>
+    <label for=""><input type="text" name="state" id="">State</label>
+    <label for=""><input type="text" name="zip" id="">Zip Code</label>
+    <button type="submit">Confirm Purchase</button>
+    {% if message %}
+      <p>{{message}}</p>
+    {% endif %}
+  </form>
+
+
+
+
+</div>
+{% endblock %}

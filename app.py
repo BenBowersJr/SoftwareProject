@@ -8,8 +8,6 @@ from sqlalchemy import *
 
 app = Flask(__name__)
 
-
-
 con = psycopg2.connect(
   host = "ec2-3-217-219-146.compute-1.amazonaws.com",
   database= "d3duhguvo7sdom",
@@ -109,6 +107,7 @@ def deletingOrder():
 
 @app.route('/login', methods =['GET', 'POST'])
 def login():
+  global username
   if request.method == 'POST':
     username = request.form['username']
     password = request.form['password']
@@ -205,7 +204,7 @@ def menu():
   allCrusts = cur.fetchall()
 
   ##### this is converting the tuples returned from the SQL query into strings so they display cleanly on the menu#####
-  global fixedCrusts, fixedToppings, fixedSizes
+  global fixedCrusts, fixedToppings, fixedSizes, orderedCrust, orderedTopp1, orderedTopp2
 
   fixedToppings = []
   for tup in allToppings:
@@ -223,17 +222,21 @@ def menu():
   if request.method == 'POST':
     #create a Dict of the new item, time is just for a unique ID
     newCartItem = { f"{time.time()}": {
-      'size': request.form['size'], 
       'crust': request.form['crust'], 
       'toppings': request.form.getlist('toppings')
       }
     }
+    orderedCrust = request.form['crust']
+    orderedTopp1 = request.form.getlist('toppings')[0]
+    orderedTopp2 = request.form.getlist('toppings')[1]
     ### if there is already an item in the cart
     if 'cart' in session:
       ### merge the new cart item with the current cart
       session['cart'] = session['cart'] | newCartItem
+      session['total'] = session['total'] + ((len(request.form.getlist('toppings')) * 5) + 15)
     else:
       ### make the cart
+      session['total'] = (len(request.form.getlist('toppings')) * 5) + 15
       session['cart'] = newCartItem
 
     cur.close()
@@ -249,13 +252,27 @@ def menu():
 
 @app.route('/clear', methods=['POST'])
 def clear():
-  global fixedCrusts, fixedToppings, fixedSizes
   session.clear()
   return redirect(url_for('menu'))
 
-@app.route('/checkout')
+@app.route('/checkout', methods=['POST', 'GET'])
 def checkout():
-  return "not done yet"
+  global username, orderedCrust, orderedTopp1, orderedTopp2
+
+  con = psycopg2.connect(
+  host = "ec2-3-217-219-146.compute-1.amazonaws.com",
+  database= "d3duhguvo7sdom",
+  user="hqlekupiwiodgw",
+  password="e02966a8d4c287b73338f72e099e751c240f11ed6434aa6c5d626e1a11cd2b8c")
+  cur = con.cursor()
+
+  if request.method == 'POST':
+    cur.execute("""INSERT INTO orders (customer_username, pizza_crust, pizza_topping1, pizza_topping2) VALUES (%s,%s,%s,%s)""", (username, orderedCrust, orderedTopp1, orderedTopp2))
+    con.commit()
+    return render_template('checkout.html', message='Order confirmed, Your Pizza is on the way!')
+  return render_template('checkout.html')
+
+
 
 
 
