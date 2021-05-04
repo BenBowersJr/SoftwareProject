@@ -158,8 +158,20 @@ def register():
       username = request.form['username']
       password = request.form['password']
       employeeID = request.form['employeeID']
+
       if employeeID == '':
         cursor.execute("""INSERT INTO customerlogin (customer_username, customer_password) VALUES (%s, %s)""", (username, password ))
+
+      if len(username) > 8 :
+        return render_template('register.html', message='Username is too long.')
+
+      cursor.execute("""SELECT * FROM customerlogin WHERE Customer_username = %s AND Customer_password = %s""", (username, password ))
+      cursor.execute("""SELECT * FROM workerlogin WHERE Worker_username = %s AND Worker_password = %s AND Employee_id = %s""", (username, password, employeeID ))
+      result = cursor.fetchone()
+      if result:
+        return render_template('register.html', message='Account already exists!')
+      elif employeeID == '':
+        cursor.execute("""INSERT INTO customerlogin VALUES (%s, %s)""", (username, password ))
         con.commit()
         cursor.execute("SELECT * FROM customerlogin")
         result = cursor.fetchall()

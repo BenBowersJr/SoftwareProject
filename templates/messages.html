@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Bulldog Pizza</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/workMenu.css') }}">
+  </head>
+
+  <body>
+    <body>
+      <header>
+          <h1>717.000.0000</h1>
+          <h1>Bulldog's Pizza</h1>
+          <a href="{{url_for('logout')}}">Logout</a>
+      </header>
+      <aside>
+          <a class="side" href="{{url_for('workOrder')}}">Orders</a>
+          <a class="side" href="{{url_for('workMenu')}}">Menu</a>
+          <a class="side" href="#">Pay Stub</a>
+          <a class="side" href="#">Messages</a>
+          <a class="side" href="#">Time Off</a>
+      </aside>
+
+      <div>
+        <img src="{{url_for('static', filename='404.jpg')}}"/>
+      </div>
+
+  </body>
+  </body>
+</html>
