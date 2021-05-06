@@ -22,7 +22,6 @@
     <nav>
       <ul>
         <li><a href="{{url_for('homepage')}}">Homepage</a></li>
-        <li><a href="{{url_for('register')}}">Register</a></li>
       </ul>
     </nav>
   </header>
@@ -40,6 +39,7 @@
           <p>{{ message }}</p>
           {% endif %}
         </h2>
+        <p>Don't have an account? Please <a href="{{url_for('register')}}">Register</a>.</p>
     </div>
 </div>
 <footer>
