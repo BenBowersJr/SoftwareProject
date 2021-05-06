@@ -4,14 +4,23 @@
   <meta charset="UTF-8">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
   <style>
-      .container {
-          display: flex;
-          justify-content: space-around;
-          justify-items: center;
-      }
-      footer { 
-          text-align: center;
-      }
+    .container {
+        background-color: rgb(45, 102, 45);
+        display: flex;
+        justify-content: space-around;
+        justify-items: center;
+        width: 100%;
+    }
+    input {
+        border-style: groove;
+    }
+    a {
+        color: white;
+        text-decoration: none;
+    }
+    footer { 
+        text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -35,10 +44,10 @@
             <input id="password" name="password" type="password" placeholder="Enter Your Password" class="textbox"/></br></br>
             <input type="submit" class="btn" value="Sign Up"></br>
         </form>
-        {% if message %}
-        <p>{{ message }}</p>
-        {% endif %}
     </h2>
+    {% if message %}
+    <p>{{ message }}</p>
+    {% endif %}
     <p>Already have an account? Please <a href="{{url_for('login')}}">Login</a>.</p>
     </div>
 </div>

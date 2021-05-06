@@ -4,14 +4,23 @@
   <meta charset="UTF-8">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
   <style>
-      .container {
-          display: flex;
-          justify-content: space-around;
-          justify-items: center;
-      }
-      footer { 
-          text-align: center;
-      }
+    .container {
+      background-color: rgb(45, 102, 45);
+      display: flex;
+      justify-content: space-around;
+      justify-items: center;
+      width: 100%;
+    }
+    input {
+        border-style: groove;
+    }
+    a {
+      color: white;
+      text-decoration: none;
+    }
+    footer { 
+        text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -27,19 +36,19 @@
   </header>
 <div class="container">
   <div>
-      <h1>Login</h1>
-      <h2>
-          <form action="" method="post">
-              <input id="username" name="username" type="text" placeholder="Enter Your Username" class="textbox"/></br></br>
-              <input id="employeeID" name="employeeID" type="text" placeholder="Enter Your EmployeeID" class="textbox"/></br></br>
-              <input id="password" name="password" type="password" placeholder="Enter Your Password" class="textbox"/></br></br>
-              <input type="submit" class="btn" value="Sign In"></br></br>
-          </form>
-          {% if message %}
-          <p>{{ message }}</p>
-          {% endif %}
-        </h2>
-        <p>Don't have an account? Please <a href="{{url_for('register')}}">Register</a>.</p>
+    <h1>Login</h1>
+    <h2>
+      <form action="" method="post">
+        <input id="username" name="username" type="text" placeholder="Enter Your Username" class="textbox"/></br></br>
+        <input id="employeeID" name="employeeID" type="text" placeholder="Enter Your EmployeeID" class="textbox"/></br></br>
+        <input id="password" name="password" type="password" placeholder="Enter Your Password" class="textbox"/></br></br>
+        <input type="submit" class="btn" value="Sign In"></br></br>
+      </form>
+      </h2>
+      {% if message %}
+      <p>{{ message }}</p>
+      {% endif %}
+      <p>Don't have an account? Please <a href="{{url_for('register')}}">Register</a>.</p>
     </div>
 </div>
 <footer>
