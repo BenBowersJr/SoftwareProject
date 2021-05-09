@@ -1,7 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request, session
-import os
+import os, psycopg2, time
 from flask_sqlalchemy import SQLAlchemy
-import psycopg2, time
 from psycopg2 import Error
 from sqlalchemy import *
 # Initialization
@@ -253,8 +252,17 @@ def menu():
       }
     }
     orderedCrust = request.form['crust']
-    orderedTopp1 = request.form.getlist('toppings')[0]
-    orderedTopp2 = request.form.getlist('toppings')[1]
+    if len(request.form.getlist('toppings')) == 0:
+      orderedTopp1 = 'None'
+      orderedTopp2 = 'None'
+    elif len(request.form.getlist('toppings')) == 1:
+      orderedTopp1 = request.form.getlist('toppings')[0]
+    elif len(request.form.getlist('toppings')) == 2:
+      orderedTopp1 = request.form.getlist('toppings')[0]
+      orderedTopp2 = request.form.getlist('toppings')[1]
+    elif len(request.form.getlist('toppings')) <= 3:
+      return render_template('cmenu.html', crusts=fixedCrusts, sizes=fixedSizes, toppings=fixedToppings, message="Please Only Select 2 Toppings")
+
     ### if there is already an item in the cart
     if 'cart' in session:
       ### merge the new cart item with the current cart
@@ -268,7 +276,8 @@ def menu():
     return render_template('cmenu.html', crusts=fixedCrusts, sizes=fixedSizes, toppings=fixedToppings)
 
   if request.method == 'GET':
-
+    if username == '':
+      return render_template('cmenu.html', crusts=fixedCrusts, sizes=fixedSizes, toppings=fixedToppings, message="Please Log-In Before Ordering")
     return render_template('cmenu.html', crusts=fixedCrusts, sizes=fixedSizes, toppings=fixedToppings)
 
 @app.route('/clear', methods=['POST'])
@@ -284,9 +293,6 @@ def checkout():
     con.commit()
     return render_template('checkout.html', message='Order confirmed, Your Pizza is on the way!')
   return render_template('checkout.html')
-
-
-
 
 
 if __name__ == '__main__':

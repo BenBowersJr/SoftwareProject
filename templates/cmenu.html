@@ -13,12 +13,14 @@
       <form action="" method="post">
         <fieldset>
           <legend>Select Your Pizza Crust</legend>
+          <p>Each Crust Cost $15</p>
           {% for item in crusts %}
           <label><input type="radio" name="crust" value="{{item}}">{{item}}</label>
           {%endfor%}
         </fieldset>
         <fieldset>
           <legend>Select Only 2 Toppings</legend>
+          <p>Each Topping Cost $5</p>
           {%for item in toppings%}
           <label><input type="checkbox" name="toppings" value="{{item}}">{{item}}</label>
           {%endfor%}
@@ -40,11 +42,8 @@
       </div>
         {% for key,val in session['cart'].items() %}
           <div class="cart-item">
-            <p>Pizza Size: {{val.size}}</p>
             <p>Pizza Crust: {{val.crust}}</p>
-            
             <p>Pizza Toppings:{% for topping in val.toppings%} {{topping}} {% endfor %}</p>
-            
           </div>
         {% endfor%}
         
