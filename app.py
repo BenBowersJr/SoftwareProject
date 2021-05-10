@@ -188,7 +188,7 @@ def register():
       message = 'Please fill out form!'
       return render_template('register.html', message = message)
     if len(username) > 8 :
-      message = 'Username is too long.'
+      message = 'Username is too long, must be 8 characters or less.'
       return render_template('register.html', message = message)
 
     cursor.execute("""SELECT * FROM customerlogin WHERE Customer_username = %s AND Customer_password = %s""", (username, password ))
